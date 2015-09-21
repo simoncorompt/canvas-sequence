@@ -1,11 +1,8 @@
 $(document).ready(function() {
 
-    setTimeout(function() {
-        var sequence = new CanvasSequence('canvas', 'img/pngSequence56/vvt0', 201, '.png', function() {
-            console.log("Loaded !")
-        });
 
-    }, 2000);
-
+    var sequence = new CanvasSequence('canvas', 'img/sequence_00', 98, 180, '.jpg', function() {
+        console.log("Loaded !")
+    });
 
 });

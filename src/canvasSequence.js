@@ -1,17 +1,24 @@
 class CanvasSequence {
 
-    constructor(canvas, sequencePath, sequenceLength, fileType, loadCallback) {
+    constructor(canvas, sequencePath, sequenceStart, sequenceEnd, fileType, loadCallback) {
 
         this.sequence = [];
 
         this.canvas = document.getElementById(canvas);
-        this.context = this.canvas.getContext('2d');
+
+        if(this.canvas !== null) {
+            this.context = this.canvas.getContext('2d');
+        } else {
+            console.log("Please ensure the lib is loaded when DOM is loaded.")
+        }
 
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
 
         this.sequencePath = sequencePath;
-        this.sequenceLength = sequenceLength;
+        this.sequenceStart = sequenceStart;
+        this.sequenceEnd = sequenceEnd;
+        this.sequenceLength = this.sequenceEnd - this.sequenceStart;
 
         this.fileType = fileType || '.png';
 
@@ -25,7 +32,7 @@ class CanvasSequence {
     }
 
     addLeadingZeros(n) {
-        var length = this.sequenceLength.toString().length;
+        var length = this.sequenceEnd.toString().length;
         var str = (n > 0 ? n : -n) + "";
         var zeros = "";
         for (var i = length - str.length; i > 0; i--)
@@ -36,23 +43,31 @@ class CanvasSequence {
 
     loadSequence() {
 
-        for(var i = 0; i < this.sequenceLength; i++) {
+        var promises = [];
+
+        for(var i = this.sequenceStart; i <= this.sequenceEnd; i++) {
 
             var frameNumber = this.addLeadingZeros(i);
             var filename = this.sequencePath + frameNumber + this.fileType;
             var img = new Image;
             img.src = filename;
 
-            img.onload = () => {
-             this.loadedCounter++;
-             if(this.loadedCounter === this.sequenceLength) {
-             this.loadCallback();
-             this.renderFrame();
-             }
-             };
+            var promise = new Promise(function(resolve, reject) {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+
+            promises.push(promise);
 
             this.sequence.push(img);
         }
+
+        Promise.all(promises).then(() => {
+            this.renderFrame();
+            this.loadCallback();
+        }).catch((e) => {
+            console.log(e);
+        });
     }
 
     getNextFrameNumber() {
