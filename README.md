@@ -1,5 +1,5 @@
 # canvas-sequence
-Small library that plays image sequences with your scroll.
+Small library that plays image sequences on scroll.
 
 Written in ES6, compiled with Babeljs for browser support. Compatible AMD, CommonJS and plain JS.
 
