@@ -11,5 +11,5 @@ gulp
 
 Use `gulp` to automatically recompile when you make changes.
 
-Alternatively, you can use `gulp compile` recompile only when needed.
+Alternatively, you can use `gulp compile` to recompile only when needed.
 
