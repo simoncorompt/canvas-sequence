@@ -22,8 +22,11 @@ class CanvasSequence {
 
         this.fileType = fileType || '.png';
 
-        this.scrollHeight = document.body.scrollHeight;
-        this.scrollOffset = document.body.scrollTop;
+        var documentHeight = $(document).height();
+        this.scrollHeight = documentHeight;
+
+        this.scrollOffset = window.pageYOffset || document.documentElement.scrollTop,
+        
         this.clientHeight = window.innerHeight;
 
         this.loadCallback = loadCallback || function() {};
@@ -39,6 +42,7 @@ class CanvasSequence {
             zeros += "0";
         zeros += str;
         return n >= 0 ? zeros : "-" + zeros;
+
     }
 
     loadSequence() {
@@ -68,16 +72,18 @@ class CanvasSequence {
         }).catch((e) => {
             console.log(e);
         });
+
     }
 
     getNextFrameNumber() {
+        
         var scrollPercentage = (this.scrollOffset/(this.scrollHeight-this.clientHeight))*100;
         var currentFrameNumber = Math.round(scrollPercentage*this.sequenceLength/100);
         return currentFrameNumber;
     }
 
     syncScrollPosition() {
-        this.scrollOffset = document.body.scrollTop;
+        this.scrollOffset = window.pageYOffset || document.documentElement.scrollTop;
     }
 
     drawImage(frame) {
@@ -90,7 +96,6 @@ class CanvasSequence {
                 console.log("The current frame has not been loaded. Please ensure all images are loaded before updating the canvas.")
             }
         }
-
     }
 
     renderFrame() {
@@ -123,11 +128,14 @@ if (!window.requestAnimationFrame) {
                 window.setTimeout(callback, 1000 / 60);
             };
     })();
+
 }
 
 if (typeof define === 'function' && define.amd) {
     define('CanvasSequence', CanvasSequence);
+
 } else if (typeof module !== 'undefined' && module.exports) {
+
     module.exports = CanvasSequence;
 } else {
     window.CanvasSequence = CanvasSequence;
